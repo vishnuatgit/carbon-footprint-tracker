@@ -1,36 +1,31 @@
 # EcoMetrics
 
-Hey there! Welcome to EcoMetrics. This is my submission for the carbon footprint tracker challenge.
-
-I originally thought about building an AI-coach chatbot, but I realized a clean, straightforward dashboard would be much more practical and usable. So, I built a lightweight, interactive web app to help people understand their baseline carbon footprint and track their daily eco-friendly actions.
+A simple carbon footprint tracker I built to learn more about web development and sustainability. It helps you estimate your annual carbon emissions based on your lifestyle and lets you log daily eco-friendly actions to see how much you're saving over time.
 
 ## How it works
-When you first open the app, it asks you 5 quick lifestyle questions. Based on your answers, it estimates your annual carbon footprint and compares it to the global average (around 4,000 kg) and the 1.5°C climate target (2,500 kg). 
+When you first open the app, it asks you 5 quick lifestyle questions — stuff like how you commute, what you eat, how often you fly, etc. Based on your answers, it calculates a rough annual carbon footprint and compares it to the global average (~4,000 kg) and the 1.5°C climate target (2,500 kg).
 
-From there, you can log daily actions—like taking the bus or buying something second-hand. The dashboard tracks the carbon you've saved and gives you personalized tips based on your biggest emission areas. Everything is saved locally in your browser using `localStorage`, so you can close the tab and come back tomorrow without losing any of your progress.
+After that, you land on a dashboard where you can log actions like taking the bus, eating a plant-based meal, or buying something second-hand. Each action shows how much CO₂ you avoided, and the dashboard keeps a running total. Everything gets saved in your browser's localStorage, so your data sticks around even if you close the tab.
 
-## Tech Stack
-To keep things as fast and lightweight as possible (and well under the 10 MB repo limit), I stuck to the basics:
-- Vanilla HTML
-- Vanilla CSS 
-- Vanilla JavaScript
+## Tech stack
+Kept it simple — no frameworks, no build tools:
+- HTML
+- CSS
+- JavaScript
 
-There's no build step, no Webpack, and absolutely no `node_modules` folder to worry about. 
+Just open the file and it works.
 
-## Setup Instructions
-Getting this running is incredibly simple since there are no dependencies to install.
+## Running it locally
 
-1. **Clone the repo**
+1. Clone the repo
    ```bash
    git clone https://github.com/vishnuatgit/carbon-footprint-tracker.git
    ```
-2. **Open the app**
-   You can literally just double-click the `index.html` file to open it directly in your browser. It works right out of the box. 
-   
-   *(If you're making edits and prefer using a local server, just open the folder in VS Code and use the Live Server extension).*
+2. Open `index.html` in your browser. That's it.
 
-3. **Host it live (Optional)**
-   Because it's a pure static site, you can host it for free on GitHub Pages. Just go to your repository settings on GitHub, click "Pages" on the left sidebar, set the source to deploy from the `main` branch, and hit save.
+   If you want live reload while editing, use the Live Server extension in VS Code.
 
-## A quick note on the math
-The carbon emission numbers used in the onboarding survey and the action logger are rough estimates meant for educational purposes. While they aren't exact scientific measurements, they're scaled correctly to give you a solid idea of which behavioral changes have the biggest real-world impact.
+## Notes
+- The emission numbers are rough estimates for learning purposes, not scientifically precise
+- Data is stored in localStorage so there's no backend — refresh the page and your stuff is still there
+- Hit "Reset Data" in the sidebar if you want to start fresh
