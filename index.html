@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMetrics | Carbon Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Onboarding Overlay -->
+    <div id="onboarding-view" class="view overlay active">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Welcome to EcoMetrics</h2>
+                <p>Let's configure your baseline data profile.</p>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="onboarding-progress"></div>
+            </div>
+
+            <div id="question-container" class="question-container">
+                <!-- Questions injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main SaaS Application -->
+    <div id="app-layout" class="view hidden">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon"></div>
+                <span class="logo-text">EcoMetrics</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="#" class="nav-item">Activity Log</a>
+                <a href="#" class="nav-item">Reports</a>
+                <a href="#" class="nav-item">Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="reset-data-btn" class="text-btn">Reset Data</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>Overview</h1>
+                    <span class="date-display" id="current-date"></span>
+                </div>
+                <div class="header-actions">
+                    <button id="open-log-modal-btn" class="primary-btn">Log New Action</button>
+                    <div class="user-avatar">JD</div>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-content">
+                
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="card kpi-card">
+                        <span class="kpi-label">Annual Baseline Estimate</span>
+                        <div class="kpi-value">
+                            <span id="user-baseline">0</span> <span class="kpi-unit">kg CO₂e</span>
+                        </div>
+                    </div>
+                    <div class="card kpi-card highlight">
+                        <span class="kpi-label">Emissions Averted (30d)</span>
+                        <div class="kpi-value">
+                            <span id="user-saved">0.0</span> <span class="kpi-unit">kg CO₂e</span>
+                        </div>
+                    </div>
+                    <div class="card kpi-card">
+                        <span class="kpi-label">1.5°C Climate Target</span>
+                        <div class="kpi-value">
+                            <span>2,500</span> <span class="kpi-unit">kg CO₂e</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="split-grid">
+                    <!-- Analytics Chart / Comparison -->
+                    <div class="card col-span-2">
+                        <div class="card-header">
+                            <h3>Benchmarking</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="comparison-bars">
+                                <div class="bar-group">
+                                    <span class="bar-label">Your Profile</span>
+                                    <div class="bar-wrapper"><div class="bar user-bar" id="chart-user"></div></div>
+                                    <span class="bar-value" id="chart-user-val">0</span>
+                                </div>
+                                <div class="bar-group">
+                                    <span class="bar-label">Global Avg</span>
+                                    <div class="bar-wrapper"><div class="bar avg-bar" style="width: 80%"></div></div>
+                                    <span class="bar-value">4,000</span>
+                                </div>
+                                <div class="bar-group">
+                                    <span class="bar-label">Paris Target</span>
+                                    <div class="bar-wrapper"><div class="bar target-bar" style="width: 50%"></div></div>
+                                    <span class="bar-value">2,500</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actionable Insights -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Actionable Insight</h3>
+                        </div>
+                        <div class="card-body">
+                            <p id="weekly-challenge" class="insight-text">Analyzing your profile...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Log Table -->
+                <div class="card table-card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Action Logged</th>
+                                    <th>Impact (Saved)</th>
+                                    <th>System Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activity-table-body">
+                                <tr id="empty-state-row">
+                                    <td colspan="4" class="text-center text-muted">No activity logged yet. Click "Log New Action" to begin.</td>
+                                </tr>
+                                <!-- Rows injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Log Action Modal -->
+    <div id="log-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Log Action</h2>
+                <button id="close-modal-btn" class="icon-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="action-select">Action Type</label>
+                    <select id="action-select" class="form-control">
+                        <option value="" disabled selected>Select an action...</option>
+                        <!-- Options injected via JS -->
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-modal-btn" class="secondary-btn">Cancel</button>
+                <button id="submit-action-btn" class="primary-btn" disabled>Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
