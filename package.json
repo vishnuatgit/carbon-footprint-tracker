@@ -1,0 +1,11 @@
+{
+  "name": "carbon-footprint-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EcoMetrics: estimate your yearly carbon footprint and log eco-friendly actions.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  }
+}

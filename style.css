@@ -10,8 +10,9 @@
     
     --border-color: #334155;
     
-    --primary: #3b82f6; /* Blue for primary actions */
-    --primary-hover: #2563eb;
+    --primary: #2563eb; /* Blue for primary actions (white text passes WCAG AA) */
+    --primary-hover: #1d4ed8;
+    --focus: #93c5fd;
     --success: #10b981; /* Green for positive metrics */
     --danger: #ef4444;
     
@@ -33,7 +34,7 @@
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-app);
     color: var(--text-main);
     line-height: 1.5;
@@ -42,7 +43,7 @@ body {
 
 /* Utilities */
 .hidden { display: none !important; }
-.active { display: flex; animation: fadeIn 0.3s ease; }
+.view:not(.hidden) { display: flex; animation: fadeIn 0.3s ease; }
 .text-muted { color: var(--text-muted); }
 .text-center { text-align: center; }
 
@@ -165,10 +166,9 @@ button {
 /* Modals & Overlays */
 .overlay, .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
+    padding: 1rem;
+    overflow-y: auto;
     background-color: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(4px);
     display: flex;
@@ -550,3 +550,86 @@ button {
     .sidebar-nav { flex-direction: row; overflow-x: auto; flex: unset; }
     .sidebar-footer { display: none; }
 }
+
+/* Accessibility helpers */
+:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.question-step {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.question-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+}
+
+.question-title:focus { outline: none; }
+
+.kpi-sub {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.cell-strong { font-weight: 500; }
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.boot-fallback {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    opacity: 0;
+    animation: fadeIn 0.2s ease 1.5s forwards;
+}
+
+.boot-fallback code { color: var(--text-main); }
+
+.noscript {
+    padding: 1rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .sidebar { flex-wrap: wrap; gap: 0.75rem; }
+    .sidebar-footer { display: flex; flex-direction: row; padding: 0; width: 100%; gap: 1rem; }
+    #app-layout { height: auto; min-height: 100vh; overflow: visible; }
+    .top-header { padding: 1rem; flex-wrap: wrap; gap: 0.75rem; }
+    .dashboard-content { padding: 1rem; }
+    .modal-card { padding: 1.25rem; }
+    .bar-label { width: 72px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Let flex and grid children shrink so wide tables scroll inside their card */
+.main-content, .card, .split-grid > *, .kpi-grid > * { min-width: 0; }
+.table-responsive { position: relative; }

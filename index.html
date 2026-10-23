@@ -5,26 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoMetrics | Carbon Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Estimate your yearly carbon footprint and log eco-friendly actions. Runs in your browser; data stays in localStorage.">
 </head>
 <body>
 
     <!-- Onboarding Overlay -->
-    <div id="onboarding-view" class="view overlay active">
-        <div class="modal-card">
+    <div id="onboarding-view" class="view overlay">
+        <div class="modal-card" role="region" aria-labelledby="welcome-title">
             <div class="modal-header">
-                <h2>Welcome to EcoMetrics</h2>
-                <p>Let's configure your baseline data profile.</p>
+                <h2 id="welcome-title">Welcome to EcoMetrics</h2>
+                <p>Five quick questions give you a rough yearly estimate.</p>
             </div>
             
-            <div class="progress-bar-container">
+            <div class="progress-bar-container" id="onboarding-progress-track" role="progressbar" aria-label="Questionnaire progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div class="progress-bar" id="onboarding-progress"></div>
             </div>
 
             <div id="question-container" class="question-container">
-                <!-- Questions injected via JS -->
+                <p class="boot-fallback">Loading… If this message stays, the JavaScript did not load. Opened <code>index.html</code> straight from disk? Serve the folder instead: <code>python -m http.server 8105</code></p>
             </div>
         </div>
     </div>
@@ -38,19 +36,18 @@
                 <div class="logo-icon"></div>
                 <span class="logo-text">EcoMetrics</span>
             </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">Dashboard</a>
-                <a href="#" class="nav-item">Activity Log</a>
-                <a href="#" class="nav-item">Reports</a>
-                <a href="#" class="nav-item">Settings</a>
+            <nav class="sidebar-nav" aria-label="Sections">
+                <a href="#overview" class="nav-item">Overview</a>
+                <a href="#activity" class="nav-item">Activity</a>
             </nav>
             <div class="sidebar-footer">
-                <button id="reset-data-btn" class="text-btn">Reset Data</button>
+                <button type="button" id="retake-btn" class="text-btn">Retake questions</button>
+                <button type="button" id="reset-data-btn" class="text-btn">Reset data</button>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" id="overview" tabindex="-1">
             
             <!-- Header -->
             <header class="top-header">
@@ -59,8 +56,7 @@
                     <span class="date-display" id="current-date"></span>
                 </div>
                 <div class="header-actions">
-                    <button id="open-log-modal-btn" class="primary-btn">Log New Action</button>
-                    <div class="user-avatar">JD</div>
+                    <button type="button" id="open-log-modal-btn" class="primary-btn">Log new action</button>
                 </div>
             </header>
 
@@ -70,21 +66,22 @@
                 <!-- KPI Cards -->
                 <div class="kpi-grid">
                     <div class="card kpi-card">
-                        <span class="kpi-label">Annual Baseline Estimate</span>
+                        <span class="kpi-label">Your yearly estimate</span>
                         <div class="kpi-value">
                             <span id="user-baseline">0</span> <span class="kpi-unit">kg CO₂e</span>
                         </div>
                     </div>
                     <div class="card kpi-card highlight">
-                        <span class="kpi-label">Emissions Averted (30d)</span>
+                        <span class="kpi-label">Saved in the last 30 days</span>
                         <div class="kpi-value">
                             <span id="user-saved">0.0</span> <span class="kpi-unit">kg CO₂e</span>
                         </div>
+                        <span class="kpi-sub" id="user-saved-total"></span>
                     </div>
                     <div class="card kpi-card">
-                        <span class="kpi-label">1.5°C Climate Target</span>
+                        <span class="kpi-label">1.5 °C lifestyle target (2030)</span>
                         <div class="kpi-value">
-                            <span>2,500</span> <span class="kpi-unit">kg CO₂e</span>
+                            <span id="target-value">2,500</span> <span class="kpi-unit">kg CO₂e</span>
                         </div>
                     </div>
                 </div>
@@ -93,24 +90,24 @@
                     <!-- Analytics Chart / Comparison -->
                     <div class="card col-span-2">
                         <div class="card-header">
-                            <h3>Benchmarking</h3>
+                            <h3>How you compare (kg CO₂e per year)</h3>
                         </div>
                         <div class="card-body">
                             <div class="comparison-bars">
                                 <div class="bar-group">
-                                    <span class="bar-label">Your Profile</span>
+                                    <span class="bar-label">You</span>
                                     <div class="bar-wrapper"><div class="bar user-bar" id="chart-user"></div></div>
                                     <span class="bar-value" id="chart-user-val">0</span>
                                 </div>
                                 <div class="bar-group">
-                                    <span class="bar-label">Global Avg</span>
-                                    <div class="bar-wrapper"><div class="bar avg-bar" style="width: 80%"></div></div>
-                                    <span class="bar-value">4,000</span>
+                                    <span class="bar-label">Global average</span>
+                                    <div class="bar-wrapper"><div class="bar avg-bar" id="chart-avg"></div></div>
+                                    <span class="bar-value" id="chart-avg-val">4,000</span>
                                 </div>
                                 <div class="bar-group">
-                                    <span class="bar-label">Paris Target</span>
-                                    <div class="bar-wrapper"><div class="bar target-bar" style="width: 50%"></div></div>
-                                    <span class="bar-value">2,500</span>
+                                    <span class="bar-label">1.5 °C target</span>
+                                    <div class="bar-wrapper"><div class="bar target-bar" id="chart-target"></div></div>
+                                    <span class="bar-value" id="chart-target-val">2,500</span>
                                 </div>
                             </div>
                         </div>
@@ -119,32 +116,33 @@
                     <!-- Actionable Insights -->
                     <div class="card">
                         <div class="card-header">
-                            <h3>Actionable Insight</h3>
+                            <h3>Where to start</h3>
                         </div>
                         <div class="card-body">
-                            <p id="weekly-challenge" class="insight-text">Analyzing your profile...</p>
+                            <p class="insight-text"><strong id="insight-title"></strong><span id="insight-body"></span></p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Activity Log Table -->
-                <div class="card table-card">
+                <div class="card table-card" id="activity">
                     <div class="card-header">
-                        <h3>Recent Activity</h3>
+                        <h3>Activity log</h3>
                     </div>
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Action Logged</th>
-                                    <th>Impact (Saved)</th>
-                                    <th>System Recommendation</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Saved</th>
+                                    <th scope="col">Why it helps</th>
+                                    <th scope="col"><span class="visually-hidden">Delete</span></th>
                                 </tr>
                             </thead>
                             <tbody id="activity-table-body">
                                 <tr id="empty-state-row">
-                                    <td colspan="4" class="text-center text-muted">No activity logged yet. Click "Log New Action" to begin.</td>
+                                    <td colspan="5" class="text-center text-muted">No activity logged yet. Choose "Log new action" to add your first one.</td>
                                 </tr>
                                 <!-- Rows injected via JS -->
                             </tbody>
@@ -158,27 +156,29 @@
 
     <!-- Log Action Modal -->
     <div id="log-modal" class="modal-overlay hidden">
-        <div class="modal-card">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="log-title">
             <div class="modal-header">
-                <h2>Log Action</h2>
-                <button id="close-modal-btn" class="icon-btn">&times;</button>
+                <h2 id="log-title">Log an action</h2>
+                <button type="button" id="close-modal-btn" class="icon-btn" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="action-select">Action Type</label>
+                    <label for="action-select">What did you do today?</label>
                     <select id="action-select" class="form-control">
-                        <option value="" disabled selected>Select an action...</option>
+                        <option value="" disabled selected>Choose an action…</option>
                         <!-- Options injected via JS -->
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancel-modal-btn" class="secondary-btn">Cancel</button>
-                <button id="submit-action-btn" class="primary-btn" disabled>Save Entry</button>
+                <button type="button" id="cancel-modal-btn" class="secondary-btn">Cancel</button>
+                <button type="button" id="submit-action-btn" class="primary-btn" disabled>Save entry</button>
             </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <div id="status" class="visually-hidden" role="status" aria-live="polite"></div>
+    <noscript><p class="noscript">EcoMetrics needs JavaScript to run.</p></noscript>
+    <script type="module" src="src/app.js"></script>
 </body>
 </html>
