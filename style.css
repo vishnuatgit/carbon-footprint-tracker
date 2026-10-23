@@ -629,3 +629,7 @@ button {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Let flex and grid children shrink so wide tables scroll inside their card */
+.main-content, .card, .split-grid > *, .kpi-grid > * { min-width: 0; }
+.table-responsive { position: relative; }
